@@ -1,0 +1,187 @@
+{
+  "kind": "collectionType",
+  "collectionName": "recipes",
+  "info": {
+    "singularName": "recipe",
+    "pluralName": "recipes",
+    "displayName": "Recipe"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "blocks"
+    },
+    "cuisine": {
+      "type": "enumeration",
+      "enum": [
+        "Afghan",
+        "Algerian",
+        "American",
+        "Angolan",
+        "Argentine",
+        "Armenian",
+        "Australian",
+        "Austrian",
+        "Bahamian",
+        "Bangladeshi",
+        "Barbadian",
+        "Belgian",
+        "Beninese",
+        "Bolivian",
+        "Brazilian",
+        "British",
+        "Bulgarian",
+        "Burmese",
+        "Cambodian",
+        "Cameroonian",
+        "Canadian",
+        "Caribbean",
+        "Chilean",
+        "Chinese",
+        "Colombian",
+        "Costa Rican",
+        "Croatian",
+        "Cuban",
+        "Czech",
+        "Danish",
+        "Dominican",
+        "Dutch",
+        "Ecuadorian",
+        "Egyptian",
+        "Ethiopian",
+        "Filipino",
+        "Finnish",
+        "French",
+        "German",
+        "Ghanaian",
+        "Greek",
+        "Guatemalan",
+        "Haitian",
+        "Honduran",
+        "Hungarian",
+        "Indian",
+        "Indonesian",
+        "Iranian",
+        "Iraqi",
+        "Irish",
+        "Israeli",
+        "Italian",
+        "Jamaican",
+        "Japanese",
+        "Jordanian",
+        "Kenyan",
+        "Korean",
+        "Laotian",
+        "Lebanese",
+        "Malaysian",
+        "Mediterranean",
+        "Mexican",
+        "Middle Eastern",
+        "Mongolian",
+        "Moroccan",
+        "Nepalese",
+        "Nicaraguan",
+        "Nigerian",
+        "Norwegian",
+        "Pakistani",
+        "Palestinian",
+        "Panamanian",
+        "Paraguayan",
+        "Peruvian",
+        "Philippine",
+        "Polish",
+        "Portuguese",
+        "Puerto Rican",
+        "Romanian",
+        "Russian",
+        "Saudi Arabian",
+        "Senegalese",
+        "Serbian",
+        "Singaporean",
+        "South African",
+        "Spanish",
+        "Sri Lankan",
+        "Sudanese",
+        "Swedish",
+        "Swiss",
+        "Syrian",
+        "Taiwanese",
+        "Tanzanian",
+        "Thai",
+        "Tibetan",
+        "Trinidadian & Tobagonian",
+        "Tunisian",
+        "Turkish",
+        "Ugandan",
+        "Ukrainian",
+        "Uruguayan",
+        "Venezuelan",
+        "Vietnamese",
+        "Yemeni",
+        "Zimbabwean"
+      ]
+    },
+    "category": {
+      "type": "enumeration",
+      "enum": [
+        "breakfast",
+        "lunch",
+        "dinner",
+        "snack",
+        "dessert"
+      ]
+    },
+    "ingredients": {
+      "type": "json",
+      "required": true
+    },
+    "instructions": {
+      "type": "json",
+      "required": true
+    },
+    "imageUrl": {
+      "type": "string"
+    },
+    "isPublic": {
+      "type": "boolean",
+      "default": false
+    },
+    "author": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user",
+      "inversedBy": "recipes"
+    },
+    "prepTime": {
+      "type": "integer"
+    },
+    "cookTime": {
+      "type": "integer"
+    },
+    "servings": {
+      "type": "integer"
+    },
+    "nutrition": {
+      "type": "json"
+    },
+    "tips": {
+      "type": "json"
+    },
+    "substitutions": {
+      "type": "json"
+    },
+    "saved_recipes": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::saved-recipe.saved-recipe",
+      "mappedBy": "recipe"
+    }
+  }
+}
