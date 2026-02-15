@@ -9,6 +9,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { useState } from "react";
+import PricingSection from "./PricingSection";
 
 const PricingModal = ({children, subscriptionTeir = "free"}) => {
 
@@ -20,9 +21,10 @@ const PricingModal = ({children, subscriptionTeir = "free"}) => {
       <DialogTrigger>
         {children}
       </DialogTrigger>
-      <DialogContent>
+      <DialogContent className={"p-8 pt-4 sm:max-w-4xl"}>
         <DialogHeader>
-          <DialogTitle></DialogTitle>
+          <DialogTitle/>
+          <PricingSection/>
         </DialogHeader>
       </DialogContent>
     </Dialog>
