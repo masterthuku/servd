@@ -89,7 +89,7 @@ export function getCountryFlag(country) {
     Filipino: "🌴",
     French: "🥐",
     Greek: "🏛️",
-    Indian: "🪷",
+    Indian: "🌿",
     Irish: "☘️",
     Italian: "🍕",
     Jamaican: "🌴",
