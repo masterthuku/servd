@@ -13,44 +13,52 @@ const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 
 const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
 
-export async function scanPantryItem(formData) {
+export async function scanPantryImage(formData) {
   try {
     const user = await checkUser();
     if (!user) {
       throw new Error("User not authenticated");
     }
+
+    // Check if user is Pro
     const isPro = user.subscriptionTier === "pro";
+
+    // Apply Arcjet rate limit based on tier
     const arcjetClient = isPro ? proTeirLimit : freePantryScans;
+
+    // Create a request object for Arcjet
     const req = await request();
 
     const decision = await arcjetClient.protect(req, {
-      userId: user.clerkId,
-      requested: 1,
+      userId: user.clerkId, // Use clerkId from checkUser
+      requested: 1, // Request 1 token from bucket
     });
+
     if (decision.isDenied()) {
       if (decision.reason.isRateLimit()) {
         throw new Error(
           `Monthly scan limit reached. ${
             isPro
-              ? "Please contact support if you need to increase"
-              : "Please upgrade to pro for unlimited scans"
-          }`,
+              ? "Please contact support if you need more scans."
+              : "Upgrade to Pro for unlimited scans!"
+          }`
         );
       }
-      throw new Error("Requested denied by security server");
+      throw new Error("Request denied by security system");
     }
+
     const imageFile = formData.get("image");
     if (!imageFile) {
-      throw new Error("No image file provided");
+      throw new Error("No image provided");
     }
 
+    // Convert image to base64
     const bytes = await imageFile.arrayBuffer();
     const buffer = Buffer.from(bytes);
-    const base64 = buffer.toString("base64");
+    const base64Image = buffer.toString("base64");
 
-    const model = genAI.getGenerativeModel({
-      model: "gemini-2.5-flash-lite",
-    });
+    // Call Gemini Vision API
+    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash-lite" });
 
     const prompt = `
 You are a professional chef and ingredient recognition expert. Analyze this image of a pantry/fridge and identify all visible food ingredients.
@@ -78,40 +86,45 @@ Rules:
       {
         inlineData: {
           mimeType: imageFile.type,
-          data: base64,
+          data: base64Image,
         },
       },
     ]);
+
     const response = await result.response;
     const text = response.text();
 
+    // Parse JSON response
     let ingredients;
     try {
       const cleanText = text
         .replace(/```json\n?/g, "")
-        .replace(/```/g, "")
+        .replace(/```\n?/g, "")
         .trim();
       ingredients = JSON.parse(cleanText);
-    } catch (error) {
+    } catch (parseError) {
       console.error("Failed to parse Gemini response:", text);
       throw new Error("Failed to parse ingredients. Please try again.");
     }
 
     if (!Array.isArray(ingredients) || ingredients.length === 0) {
-      throw new Error("No ingredients found in image. Please try again.");
+      throw new Error(
+        "No ingredients detected in the image. Please try a clearer photo."
+      );
     }
 
     return {
       success: true,
       ingredients: ingredients.slice(0, 20),
-      scansLimit: isPro ? "Unlimited" : 10,
-      message: `Found ${ingredients.length} ingredients.`,
+      scansLimit: isPro ? "unlimited" : 10,
+      message: `Found ${ingredients.length} ingredients!`,
     };
   } catch (error) {
     console.error("Error scanning pantry:", error);
     throw new Error(error.message || "Failed to scan image");
   }
 }
+
 
 export async function saveToPantry(formData) {
   try {

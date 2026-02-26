@@ -1,5 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  reactStrictMode: false,
   turbopack: false,
   experimental: {
     serverComponentsHmrCache: false, // defaults to true
