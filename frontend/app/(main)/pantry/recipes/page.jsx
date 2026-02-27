@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 
 import { getRecipesByPantryIngredients } from "@/actions/recipes.actions";
