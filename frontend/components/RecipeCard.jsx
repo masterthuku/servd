@@ -15,34 +15,42 @@ import { Badge } from "./ui/badge";
 
 const RecipeCard = ({ recipe, variant = "default" }) => {
   const getRecipeData = () => {
-    if (recipe.strMeal) {
-      return {
-        title: recipe.strMeal,
-        image: recipe.strMealThumb,
-        href: `/recipe?cook=${encodeURIComponent(recipe.strMeal)}`,
-        showImage: true,
-      };
-    }
+  // 1. TheMealDB API format
+  if (recipe.strMeal) {
+    return {
+      title: recipe.strMeal,
+      image: recipe.strMealThumb,
+      href: `/recipe?cook=${encodeURIComponent(recipe.strMeal)}`,
+      showImage: !!recipe.strMealThumb,
+    };
+  }
 
-    if (recipe.matchPercentage) {
-      return {
-        title: recipe.title,
-        description: recipe.description,
-        category: recipe.category,
-        cuisine: recipe.cuisine,
-        prepTime: recipe.prepTime,
-        cookTime: recipe.cookTime,
-        servings: recipe.servings,
-        matchPercentage: recipe.matchPercentage,
-        missingIngredients: recipe.missingIngredients || [],
-        image: recipe.imageUrl, // Add image support
-        href: `/recipe?cook=${encodeURIComponent(recipe.title)}`,
-        showImage: !!recipe.imageUrl, // Show if image exists
-      };
-    }
+  // 2. Strapi / saved / pantry format – make matchPercentage optional
+  if (recipe.title) {   // ← changed condition: only require title
+    return {
+      title: recipe.title,
+      description: recipe.description,
+      category: recipe.category,
+      cuisine: recipe.cuisine,
+      prepTime: recipe.prepTime,
+      cookTime: recipe.cookTime,
+      servings: recipe.servings,
+      matchPercentage: recipe.matchPercentage,     // can be undefined
+      missingIngredients: recipe.missingIngredients || [],
+      image: recipe.imageUrl || recipe.strMealThumb || null,
+      href: `/recipe?cook=${encodeURIComponent(recipe.title)}`,
+      showImage: !!recipe.imageUrl || !!recipe.strMealThumb,
+    };
+  }
 
-    return {};
-  };
+// 3. Fallback to prevent total crash
+console.warn("RecipeCard received invalid recipe shape:", recipe);
+return {
+  title: "Untitled Recipe",
+  href: "#",
+  showImage: false,
+};
+};
 
   const data = getRecipeData();
 
@@ -125,14 +133,7 @@ const RecipeCard = ({ recipe, variant = "default" }) => {
           <div className="flex justify-between items-start">
             <div className="flex-1">
               <div className="flex flex-wrap gap-2 mb-3">
-                {data.cuisine && (
-                  <Badge
-                    variant="outline"
-                    className="text-orange-600 border-orange-200 capitalize"
-                  >
-                    {data.cuisine}
-                  </Badge>
-                )}
+                
                 {data.category && (
                   <Badge
                     variant="outline"
@@ -258,14 +259,8 @@ const RecipeCard = ({ recipe, variant = "default" }) => {
             <div className="flex-1 py-5">
               <CardHeader>
                 <div className="flex flex-wrap gap-2 mb-2">
-                  {data.cuisine && (
-                    <Badge
-                      variant="outline"
-                      className="text-orange-600 border-orange-200 capitalize"
-                    >
-                      {data.cuisine}
-                    </Badge>
-                  )}
+                  
+                  
                   {data.category && (
                     <Badge
                       variant="outline"

@@ -7,9 +7,12 @@ import {
   saveRecipeToCollection,
 } from "@/actions/recipes.actions";
 import ProLockedSection from "@/components/ProLockedSection";
+import { RecipePDF } from "@/components/RecipePDF";
+
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import useFetch from "@/hooks/use-fetch";
+import { PDFDownloadLink } from "@react-pdf/renderer";
 import {
   AlertCircle,
   ArrowLeft,
@@ -18,6 +21,7 @@ import {
   CheckCircle2,
   ChefHat,
   Clock,
+  Download,
   Flame,
   Lightbulb,
   Loader2,
@@ -134,7 +138,7 @@ function RecipeContent() {
     return (
       <div className="min-h-screen bg-stone-50 pt-24 pb-16 px-4">
         <div className="container mx-auto max-w-4xl text-center py-20">
-          <ClockLoader className="mx-auto mb-6" color="dc6300" />
+          <ClockLoader className="mx-auto mb-6" color="#dc6300" />
           <h2 className="text-3xl font-bold text-stone-900 mb-2 tracking-tight">
             Prepairing your recipe...
           </h2>
@@ -210,14 +214,7 @@ function RecipeContent() {
               </div>
             )}
             <div className="flex flex-wrap gap-2 mb-4">
-              <Badge
-                variant="outline"
-                className={
-                  "text-orange-600 border-2 border-orange-200 capitalize"
-                }
-              >
-                {recipe.cuisine}
-              </Badge>
+              
               <Badge
                 variant="outline"
                 className={
@@ -277,8 +274,24 @@ function RecipeContent() {
                   </>
                 )}
               </Button>
-
               {/* PDF download button */}
+              <PDFDownloadLink
+                document={<RecipePDF recipe={recipe} />}
+                fileName={`${recipe.title
+                  .replace(/\s+/g, "-")
+                  .toLowerCase()}.pdf`}
+              >
+                {({ loading }) => (
+                  <Button
+                    variant="outline"
+                    className="border-2 border-orange-600 text-orange-700 hover:bg-orange-50 gap-2"
+                    disabled={loading}
+                  >
+                    <Download className="w-4 h-4" />
+                    {loading ? "Preparing PDF..." : "Download PDF"}
+                  </Button>
+                )}
+              </PDFDownloadLink>
             </div>
           </div>
         </div>
@@ -440,48 +453,54 @@ function RecipeContent() {
             </div>
           )}
 
-          {recipe.substitutions && recipe.substitutions.length > 0 && (
-            <div className="bg-white p-8 border-2 border-stone-200">
-              <h2 className="text-2xl font-bold text-stone-900 mb-4 flex items-center gap-2">
-                Ingredient Substitutions
-                {!recipeData.isPro && (
-                  <span className="text-xs bg-orange-100 text-orange-700 px-2 py-0.5 rounded-full font-semibold">
-                    PRO
-                  </span>
-                )}
-              </h2>
+                      {recipe.substitutions && recipe.substitutions.length > 0 && (
+              <div className="bg-white p-8 border-2 border-stone-200">
+                <h2 className="text-2xl font-bold text-stone-900 mb-4 flex items-center gap-2">
+                  Ingredient Substitutions
+                  {!recipeData.isPro && (
+                    <span className="text-xs bg-orange-100 text-orange-700 px-2 py-0.5 rounded-full font-semibold">
+                      PRO
+                    </span>
+                  )}
+                </h2>
 
-              <p className="text-stone-600 mb-6 text-sm font-light">
-                Don&apos;t have everything? Here are some alternatives you can
-                use:
-              </p>
+                <p className="text-stone-600 mb-6 text-sm font-light">
+                  Don&apos;t have everything? Here are some alternatives you can
+                  use:
+                </p>
 
-              <div className="space-y-4">
-                {recipe.substitutions.map((sub, i) => (
-                  <div
-                    key={i}
-                    className="border-b-2 border-stone-100 pb-4 last:border-0 last:pb-0"
-                  >
-                    <h3 className="font-bold text-stone-900 mb-2">
-                      Instead of{" "}
-                      <span className="text-orange-600">{sub.original}</span>:
-                    </h3>
-                    <div className="flex flex-wrap gap-2">
-                      {sub.alternatives.map((alt, j) => (
-                        <Badge
-                          key={j}
-                          variant="outline"
-                          className="text-stone-600 border-2 border-stone-200"
-                        >
-                          {alt}
-                        </Badge>
-                      ))}
-                    </div>
+             
+                  <div className="space-y-4">
+                    {recipe.substitutions.map((sub, i) => (
+                      <div
+                        key={i}
+                        className="border-b-2 border-stone-100 pb-4 last:border-0 last:pb-0"
+                      >
+                        <h3 className="font-bold text-stone-900 mb-2">
+                          Instead of{" "}
+                          <span className="text-orange-600">
+                            {sub.original}
+                          </span>
+                          :
+                        </h3>
+                        <div className="flex flex-wrap gap-2">
+                          {sub.alternatives.map((alt, j) => (
+                            <Badge
+                              key={j}
+                              variant="outline"
+                              className="text-stone-600 border-2 border-stone-200"
+                            >
+                              {alt}
+                            </Badge>
+                          ))}
+                        </div>
+                      </div>
+                    ))}
                   </div>
-                ))}
+               
               </div>
-            </div>
-          )}
+            )}
+
         </div>
       </div>
     </div>
