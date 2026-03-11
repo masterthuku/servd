@@ -110,23 +110,23 @@ const PantryPage = () => {
     <div className="min-h-screen bg-stone-50 pt-24 pb-16 px-4">
       <div className="container mx-auto max-w-5xl">
         <div className="mb-4">
-          <div className="flex items-center justify-between mb-6">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
             <div className="flex items-center gap-3">
-              <Package className="w-16 h-16 text-orange-600" />
+              <Package className="w-12 h-12 md:w-16 md:h-16 text-orange-600" />
               <div>
-                <h1 className="text-4xl md:text-5xl font-bold text-stone-900 tracking-tight">
+                <h1 className="text-3xl md:text-5xl font-bold text-stone-900 tracking-tight">
                   My Pantry
                 </h1>
-                <p className="text-stone-600 font-light">
+                <p className="text-stone-600 font-light text-sm md:text-base">
                   Manage your ingredients and discover what you can cook.
                 </p>
               </div>
             </div>
+
             <Button
               onClick={() => setIsModalOpen(true)}
-              className="flex md:flex"
               size="lg"
-              variant="primary"
+              className="flex items-center justify-center gap-2 w-full md:w-auto bg-orange-600 hover:bg-orange-700 text-white"
             >
               <Plus className="w-5 h-5" />
               Add to Pantry
